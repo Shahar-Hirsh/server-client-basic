@@ -10,22 +10,26 @@ except Exception as e:
     exit(f"server is down - try again {str(e)}")
 
 while True:
-    msg = input("enter msg to send - ").upper()
+    msg = input("enter msg to send (TIME, NAME, RAND, EXIT)- ").upper()
     if msg not in ["TIME", "NAME", "RAND", "EXIT"]:
         print("not a valid input - try again")
         continue
 
     try:
         my_sock.send(msg.encode())
+    except Exception as e:
+        print(f"error in  sending data {str(e)}")
+        break
+
+    if msg == "EXIT":
+        break
+
+    try:
         data_len = int(my_sock.recv(2).decode())
         data = my_sock.recv(data_len).decode()
         print(f"server send - {data}")
-
-        if msg == "EXIT":
-            break
-
     except Exception as e:
-        print(f"error in receive or sending data {str(e)}")
+        print(f"error in receive data {str(e)}")
         break
 
 my_sock.close()
